@@ -36,8 +36,10 @@ private static Plugin plugin;
 				Bukkit.getPluginManager().disablePlugin(this);
 				Bukkit.getPluginManager().enablePlugin(this);
 				sender.sendMessage("§aReload succesful");
+				return true;
 			}else{
 				sender.sendMessage("§cNope");
+				return true;
 			}
 		}
 		return false;
