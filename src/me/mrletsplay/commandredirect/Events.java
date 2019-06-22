@@ -8,8 +8,11 @@ public class Events implements Listener {
 
 	@EventHandler
 	public void onCmd(PlayerCommandPreprocessEvent e) {
-		String[] spl = e.getMessage().split(" ");
-		String cmd = spl[0];
+		String cmd = null;
+		for(String c2 : Config.getCMDs()) {
+			if(e.getMessage().toLowerCase().startsWith(c2.toLowerCase()) && (cmd == null || c2.length() > cmd.length())) cmd = e.getMessage().substring(0, c2.length()); // Preserve original case
+		}
+		if(cmd == null) return;
 		boolean cs = Config.isCaseSensitive(cmd, cmd.toLowerCase());
 		if (Config.hasRedirection(e.getPlayer().getWorld().getName(), cs ? cmd : cmd.toLowerCase())) {
 			e.setCancelled(true);
