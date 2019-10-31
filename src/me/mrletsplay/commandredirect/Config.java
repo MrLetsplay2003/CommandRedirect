@@ -1,5 +1,6 @@
 package me.mrletsplay.commandredirect;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.configuration.MemorySection;
@@ -20,6 +21,8 @@ public class Config {
 			config.addDefault("redirections./plugins.case-sensitive", false);
 			config.addDefault("redirections./reload.world", "/help");
 			config.addDefault("redirections./reload.case-sensitive", false);
+			config.addDefault("global-redirections./mycommand.redirection", "/help");
+			config.addDefault("global-redirections./mycommand.case-sensitive", false);
 			config.options().copyDefaults(true);
 			save();
 		}
@@ -30,8 +33,15 @@ public class Config {
 		config = Main.getPlugin().getConfig();
 	}
 	
-	public static Set<String> getCMDs() {
-		return ((MemorySection) config.get("redirections")).getKeys(false);
+	public static Set<String> getRedirectedCommands() {
+		Set<String> strs = new HashSet<>();
+		strs.addAll(((MemorySection) config.get("redirections")).getKeys(false));
+		strs.addAll(((MemorySection) config.get("global-redirections")).getKeys(false));
+		return strs;
+	}
+	
+	public static void addGlobalRedirection(String cmd, String toCmd) {
+		config.set("global-redirections." + cmd + ".redirection", toCmd);
 	}
 
 	public static void addRedirection(String world, String cmd, String toCmd) {
@@ -39,16 +49,27 @@ public class Config {
 		save();
 	}
 
-	public static boolean isCaseSensitive(String world, String cmdLC) {
+	public static boolean isGlobalCaseSensitive(String cmdLC) {
+		return config.getBoolean("global-redirections." + cmdLC + ".case-sensitive");
+	}
+
+	public static boolean isCaseSensitive(String cmdLC) {
 		return config.getBoolean("redirections." + cmdLC + ".case-sensitive");
 	}
 
 	public static boolean hasRedirection(String world, String cmd) {
-		return getRedirection(world, cmd) != null;
+		return getRedirection(world, cmd) != null
+				|| getGlobalRedirection(cmd) != null;
+	}
+
+	public static String getGlobalRedirection(String cmd) {
+		return config.getString("global-redirections." + (isGlobalCaseSensitive(cmd.toLowerCase()) ? cmd : cmd.toLowerCase()) + ".redirection");
 	}
 
 	public static String getRedirection(String world, String cmd) {
-		return config.getString("redirections." + cmd + "." + world);
+		String red = config.getString("redirections." + (isCaseSensitive(cmd.toLowerCase()) ? cmd : cmd.toLowerCase()) + "." + world);
+		if(red != null) return red;
+		return getGlobalRedirection(cmd);
 	}
 
 }

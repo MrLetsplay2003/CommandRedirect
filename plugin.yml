@@ -1,6 +1,6 @@
 main: me.mrletsplay.commandredirect.Main
 name: CommandRedirect
-version: 1.4
+version: "1.5"
 author: MrLetsplay2003
 api-version: 1.13
 
