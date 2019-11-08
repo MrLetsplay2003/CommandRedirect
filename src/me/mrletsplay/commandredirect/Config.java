@@ -35,8 +35,10 @@ public class Config {
 	
 	public static Set<String> getRedirectedCommands() {
 		Set<String> strs = new HashSet<>();
-		strs.addAll(((MemorySection) config.get("redirections")).getKeys(false));
-		strs.addAll(((MemorySection) config.get("global-redirections")).getKeys(false));
+		MemorySection reds = (MemorySection) config.get("redirections");
+		if(reds != null) strs.addAll(reds.getKeys(false));
+		MemorySection gReds = (MemorySection) config.get("global-redirections");
+		if(gReds != null) strs.addAll(gReds.getKeys(false));
 		return strs;
 	}
 	

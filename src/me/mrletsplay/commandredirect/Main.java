@@ -6,13 +6,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin
-{
-private static Plugin plugin;
+public class Main extends JavaPlugin {
+	
+	private static Plugin plugin;
 
 	public void onEnable(){
 		plugin = this;
-		initConfig();
+		Config.init();
 		Bukkit.getPluginManager().registerEvents(new Events(), this);
 		getLogger().info("Enabled");
 	}
@@ -21,21 +21,17 @@ private static Plugin plugin;
 		getLogger().info("Disabled");
 	}
 	
-	public static void initConfig(){
-		Config.init();
-	}
-	
 	public static Plugin getPlugin() {
 		return plugin;
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-		if(label.equalsIgnoreCase("reloadcommandredirect")){
+		if(command.getName().equalsIgnoreCase("reloadcommandredirect")){
 			if(sender.hasPermission("commandredirect.reload")){
 				Config.reloadConfig();
 				Bukkit.getPluginManager().disablePlugin(this);
 				Bukkit.getPluginManager().enablePlugin(this);
-				sender.sendMessage("§aReload succesful");
+				sender.sendMessage("§aReload successful");
 				return true;
 			}else{
 				sender.sendMessage("§cNope");
